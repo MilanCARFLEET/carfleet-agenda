@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CarFleet — App de agendamiento
 
-## Getting Started
+App web para que los clientes de cada condominio agenden su lavado detailing:
+eligen condominio, categoría de vehículo, día y hora, plan de recurrencia con
+descuento y suman puntos canjeables por premios. Milan entra como administrador.
 
-First, run the development server:
+Hecha con **Next.js** (interfaz y lógica), **Supabase** (base de datos y cuentas)
+y pensada para publicarse en **Vercel**. Todo con planes gratuitos.
 
+---
+
+## Puesta en marcha (una sola vez)
+
+### 1. Crear el proyecto en Supabase
+1. Entra a https://supabase.com y crea una cuenta.
+2. Crea un proyecto nuevo (elige la región más cercana, por ejemplo São Paulo).
+   Guarda la contraseña de la base de datos.
+3. En el menú **SQL Editor**, abre una consulta nueva, pega el contenido de
+   `supabase/schema.sql` y ejecútalo (Run).
+4. Repite con `supabase/seed.sql` (los datos iniciales: precios, premios y el
+   condominio Las Palmas del Oliveto).
+
+### 2. Conectar la app con Supabase
+1. En Supabase: **Project Settings → API**. Copia la **Project URL** y la
+   **anon public key**.
+2. En la carpeta del proyecto, copia `.env.local.example` como `.env.local` y
+   pega esos dos valores.
+
+### 3. Correr la app en tu computador
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
+Abre http://localhost:3000
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 4. Convertirte en administrador
+1. Regístrate desde la app con tu correo (pantalla de crear cuenta).
+2. En Supabase → SQL Editor, ejecuta (con tu correo):
+   ```sql
+   update clientes set rol = 'admin' where correo = 'tu-correo@ejemplo.cl';
+   ```
+3. Entra a http://localhost:3000/admin
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 5. Publicar en internet (Vercel)
+1. Sube el proyecto a un repositorio en GitHub.
+2. En https://vercel.com, importa ese repositorio.
+3. En la configuración del proyecto en Vercel, agrega las mismas dos variables
+   de entorno (`NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY`).
+4. Vercel te da una dirección (ej. `carfleet-agenda.vercel.app`). **Ese es el
+   link que envías por WhatsApp.** Más adelante se le puede poner un dominio
+   propio (ej. `agenda.carfleet.cl`).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Decisión importante: confirmación por correo
 
-To learn more about Next.js, take a look at the following resources:
+Por defecto Supabase pide que el cliente confirme su correo antes de poder entrar
+(**Authentication → Sign In / Providers → Confirm email**).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Dejarla activada:** más seguro, pero el cliente debe abrir un correo antes de
+  usar la app (más fricción).
+- **Desactivarla:** el cliente entra al instante después de registrarse (más
+  simple para onboarding por WhatsApp).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Para el inicio, lo más cómodo es desactivarla. Se puede volver a activar cuando
+quieras.
 
-## Deploy on Vercel
+> Nota sobre el inicio de sesión: hoy la cuenta funciona con **correo + clave**
+> (es gratis e incluye recuperación de clave). El teléfono se guarda como dato de
+> contacto. Si más adelante quieres que el ingreso sea con teléfono, se puede
+> cambiar (requiere activar SMS, que tiene costo por mensaje).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Qué está construido y qué falta
+
+**Listo:**
+- Base de datos completa con seguridad por cliente (cada quien ve solo lo suyo;
+  el administrador ve todo). Precios, puntos y cupos se calculan en el servidor.
+- Elegir condominio · crear cuenta · iniciar sesión · inicio del cliente
+  (próximo servicio, puntos, historial) · pantalla de puntos y premios · cerrar
+  sesión.
+
+**En construcción (próximo paso del desarrollo):**
+- Flujo de reserva: elegir categoría → servicio y recurrencia → día y hora →
+  confirmar. La lógica ya existe en la base de datos (funciones
+  `horas_disponibles` y `crear_reserva`); falta conectar las pantallas.
+- Panel de administrador: métricas, tabla de clientes y edición de precios,
+  premios, condominios y equipos.
+
+## Pendientes de negocio por definir
+- Cómo ubica el equipo el auto el día del servicio (sin domicilio guardado).
+- Confirmar la tabla de precios y el caso "pick up XL".
+- ¿Los $30.000 del City car son un piso que ningún descuento puede bajar?
+- Forma de pago (en la app o al terminar el servicio) y plazo de cancelación.
