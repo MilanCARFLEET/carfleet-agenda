@@ -72,21 +72,21 @@ quieras.
 
 ---
 
-## Qué está construido y qué falta
+## Qué está construido
 
-**Listo:**
-- Base de datos completa con seguridad por cliente (cada quien ve solo lo suyo;
-  el administrador ve todo). Precios, puntos y cupos se calculan en el servidor.
-- Elegir condominio · crear cuenta · iniciar sesión · inicio del cliente
-  (próximo servicio, puntos, historial) · pantalla de puntos y premios · cerrar
-  sesión.
+**App del cliente:** elegir condominio · crear cuenta · iniciar sesión · inicio
+(próximo servicio, puntos, historial) · **flujo de reserva completo** (categoría →
+recurrencia + premio opcional → día y hora con disponibilidad real → confirmar) ·
+puntos y premios · cerrar sesión.
 
-**En construcción (próximo paso del desarrollo):**
-- Flujo de reserva: elegir categoría → servicio y recurrencia → día y hora →
-  confirmar. La lógica ya existe en la base de datos (funciones
-  `horas_disponibles` y `crear_reserva`); falta conectar las pantallas.
-- Panel de administrador: métricas, tabla de clientes y edición de precios,
-  premios, condominios y equipos.
+**Panel de administrador** (`/admin`): resumen con métricas (ingresos, servicios,
+clientes activos, % recurrentes, ticket, ingresos por plan, clientes por
+recurrencia, servicios por categoría, puntos y premios), tabla de clientes, y
+edición en vivo de precios, puntos, descuentos por recurrencia, premios,
+condominios y equipos.
+
+**Base de datos:** seguridad por cliente (cada quien ve solo lo suyo; el
+administrador ve todo). Precios, puntos y cupos se calculan en el servidor.
 
 ## Pendientes de negocio por definir
 - Cómo ubica el equipo el auto el día del servicio (sin domicilio guardado).
